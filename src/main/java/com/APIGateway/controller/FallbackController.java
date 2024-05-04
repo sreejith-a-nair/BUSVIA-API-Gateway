@@ -8,7 +8,7 @@ public class FallbackController {
 
     @GetMapping("/authServiceFallBack")
     public  String authServiceFallback(){
-        return  "Authentication Service is down !";
+        return  "Authentication Service is down 7 !";
     }
 
     @GetMapping("/userServiceFallBack")

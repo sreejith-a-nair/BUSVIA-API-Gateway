@@ -1,10 +1,22 @@
 server:
   port: 8989
 
+#eureka:
+#  client:
+#    serviceUrl:
+#      defaultZone: http://54.169.219.205:8761/eureka/
+
 eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 1
+    leaseExpirationDurationInSeconds: 2
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://54.169.219.205:8761/eureka/
+    healthcheck:
+      enabled: true
+    lease:
+      duration: 5
 
 management:
   tracing:
@@ -15,13 +27,14 @@ spring:
   application:
     name: api-gateway
   config:
-    import: "optional:configserver:http://localhost:8088"
+    import: "optional:configserver:http://54.169.219.205:8088"
   cloud:
     gateway:
       globalcors:
         corsConfigurations:
           '[/**]':
-            allowedOrigins: "http://localhost:4200"
+#            allowedOrigins: "https://bsusvia-angular-frontend.vercel.app"
+            allowedOrigins: "*"
             allowedHeaders: "*"
             allowedMethods:
               - GET
@@ -29,81 +42,100 @@ spring:
               - DELETE
       routes:
         - id: auth-service
-          uri: lb://auth-service
+          uri: http://13.229.96.129:9090
           predicates:
             - Path=/auth/**
-          filters:
-            - name: CircuitBreaker
-              args:
-                name: auth-service
-                fallbackuri: forward:/authServiceFallBack
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.replenishRate: 1
-                redis-rate-limiter.burstCapacity: 1
         - id: user-service
-          uri: lb://user-service
+          uri: http://13.229.96.129:8081
           predicates:
             - Path=/user/**
-          filters:
-            - AuthenticationFilter
-            - name: CircuitBreaker
-              args:
-                name: user-service
-                fallbackuri: forward:/userServiceFallBack
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.replenishRate: 1
-                redis-rate-limiter.burstCapacity: 1
         - id: bus-service
-          uri: lb://bus-service
+          uri: http://54.169.219.205:8082
           predicates:
             - Path=/bus/**
-          filters:
-            - name: CircuitBreaker
-              args:
-                name: bus-service
-                fallbackuri: forward:/busServiceFallBack
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.replenishRate: 1
-                redis-rate-limiter.burstCapacity: 1
-        - id: admin-service
-          uri: lb://admin-service
-          predicates:
-            - Path=/admin/**
-          filters:
-            - name: CircuitBreaker
-              args:
-                name: admin-service
-                fallbackuri: forward:/adminServiceFallBack
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.replenishRate: 1
-                redis-rate-limiter.burstCapacity: 1
         - id: booking-service
-          uri: lb://booking-service
+          uri: http://13.229.96.129:8085
           predicates:
             - Path=/booking/**
-          filters:
-            - name: CircuitBreaker
-              args:
-                name: booking-service
-                fallbackuri: forward:/bookingServiceFallBack
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.replenishRate: 1
-                redis-rate-limiter.burstCapacity: 1
         - id: communication-service
-          uri: lb://communication
+          uri: http://54.169.219.205:8084
           predicates:
             - Path=/**
-          filters:
-            - name: CircuitBreaker
-              args:
-                name: communication-service
-                fallbackuri: forward:/communicationServiceFallBack
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.replenishRate: 1
-                redis-rate-limiter.burstCapacity: 1
+
+
+#              old
+#          filters:
+#            - name: CircuitBreaker
+#              args:
+#                name: auth-service
+#                fallbackuri: forward:/authServiceFallBack
+#            - name: RequestRateLimiter
+#              args:
+#                redis-rate-limiter.replenishRate: 1
+#                redis-rate-limiter.burstCapacity: 1
+#        - id: user-service
+#          uri: lb://user-service
+#          predicates:
+#            - Path=/user/**
+#          filters:
+#            - AuthenticationFilter
+#            - name: CircuitBreaker
+#              args:
+#                name: user-service
+#                fallbackuri: forward:/userServiceFallBack
+#            - name: RequestRateLimiter
+#              args:
+#                redis-rate-limiter.replenishRate: 1
+#                redis-rate-limiter.burstCapacity: 1
+#        - id: bus-service
+#          uri: lb://bus-service
+#          predicates:
+#            - Path=/bus/**
+#          filters:
+#            - name: CircuitBreaker
+#              args:
+#                name: bus-service
+#                fallbackuri: forward:/busServiceFallBack
+#            - name: RequestRateLimiter
+#              args:
+#                redis-rate-limiter.replenishRate: 1
+#                redis-rate-limiter.burstCapacity: 1
+#        - id: admin-service
+#          uri: lb://admin-service
+#          predicates:
+#            - Path=/admin/**
+#          filters:
+#            - name: CircuitBreaker
+#              args:
+#                name: admin-service
+#                fallbackuri: forward:/adminServiceFallBack
+#            - name: RequestRateLimiter
+#              args:
+#                redis-rate-limiter.replenishRate: 1
+#                redis-rate-limiter.burstCapacity: 1
+#        - id: booking-service
+#          uri: lb://booking-service
+#          predicates:
+#            - Path=/booking/**
+#          filters:
+#            - name: CircuitBreaker
+#              args:
+#                name: booking-service
+#                fallbackuri: forward:/bookingServiceFallBack
+#            - name: RequestRateLimiter
+#              args:
+#                redis-rate-limiter.replenishRate: 1
+#                redis-rate-limiter.burstCapacity: 1
+#        - id: communication-service
+#          uri: lb://communication
+#          predicates:
+#            - Path=/**
+#          filters:
+#            - name: CircuitBreaker
+#              args:
+#                name: communication-service
+#                fallbackuri: forward:/communicationServiceFallBack
+#            - name: RequestRateLimiter
+#              args:
+#                redis-rate-limiter.replenishRate: 1
+#                redis-rate-limiter.burstCapacity: 1

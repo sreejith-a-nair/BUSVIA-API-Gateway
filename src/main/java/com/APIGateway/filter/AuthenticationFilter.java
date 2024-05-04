@@ -29,9 +29,9 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory< Authenti
     @Override
     public GatewayFilter apply(Config config) {
         return (((exchange, chain) -> {
-            System.out.println("gate way filter work............");
+
             if(validator.isSecure.test(exchange.getRequest())){
-                System.out.println("gate way filter work.isdfsdfasdf    ...........");
+                System.out.println("gate way work ");
                 if(!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)){
                     throw new RuntimeException("Missing authorization header");
                 }
@@ -49,9 +49,7 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory< Authenti
 
                      System.out.println("Invalid");
                      throw  new RuntimeException("Unauthorized access to application");
-
                  }
-
             }
             return chain.filter(exchange);
         }));
